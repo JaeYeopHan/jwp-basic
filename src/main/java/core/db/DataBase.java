@@ -10,6 +10,10 @@ import next.model.User;
 public class DataBase {
     private static Map<String, User> users = Maps.newHashMap();
 
+    static {
+    	users.put("1", new User("1", "1", "1", "1@1"));
+    }
+    
     public static void addUser(User user) {
         users.put(user.getUserId(), user);
     }
@@ -20,5 +24,9 @@ public class DataBase {
 
     public static Collection<User> findAll() {
         return users.values();
+    }
+    
+    public static void updateUser(User user) {
+    	users.put(user.getUserId(), user);
     }
 }
