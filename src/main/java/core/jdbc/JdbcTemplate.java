@@ -7,8 +7,8 @@ import java.sql.SQLException;
 /**
  * Created by Jbee on 2017. 4. 12..
  */
-public class AdvJdbcTemplate {
-    public void execute(PreparedStatementCreator creator) throws SQLException {
+public class JdbcTemplate {
+    public void update(PreparedStatementCreator creator) throws SQLException {
         Connection con = null;
         PreparedStatement pstmt = null;
         try {

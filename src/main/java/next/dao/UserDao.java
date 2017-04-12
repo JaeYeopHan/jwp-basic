@@ -7,38 +7,43 @@ import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.List;
 
-import core.jdbc.ConnectionManager;
 import core.jdbc.JdbcTemplate;
+import core.jdbc.ConnectionManager;
+import core.jdbc.PreparedStatementCreator;
 import next.model.User;
 
 public class UserDao {
 
+    private final JdbcTemplate template = new JdbcTemplate();
+
     public void insert(User user) throws SQLException {
         String sql = "INSERT INTO USERS VALUES (?, ?, ?, ?)";
-        JdbcTemplate template = new JdbcTemplate() {
+        template.update(new PreparedStatementCreator() {
             @Override
-            public void setParameter(PreparedStatement pstmt) throws SQLException {
+            public PreparedStatement createPrepareStatement(Connection con) throws SQLException {
+                PreparedStatement pstmt = con.prepareStatement(sql);
                 pstmt.setString(1, user.getUserId());
                 pstmt.setString(2, user.getPassword());
                 pstmt.setString(3, user.getName());
                 pstmt.setString(4, user.getEmail());
+                return pstmt;
             }
-        };
-        template.update(sql);
+        });
     }
 
     public void update(User user) throws SQLException {
         String sql = "UPDATE USERS SET password = ?, name = ?, email = ? WHERE userId = ?";
-        JdbcTemplate template = new JdbcTemplate() {
+        template.update(new PreparedStatementCreator() {
             @Override
-            public void setParameter(PreparedStatement pstmt) throws SQLException {
+            public PreparedStatement createPrepareStatement(Connection con) throws SQLException {
+                PreparedStatement pstmt = con.prepareStatement(sql);
                 pstmt.setString(1, user.getPassword());
                 pstmt.setString(2, user.getName());
                 pstmt.setString(3, user.getEmail());
                 pstmt.setString(4, user.getUserId());
+                return pstmt;
             }
-        };
-        template.update(sql);
+        });
     }
 
     public List<User> findAll() throws SQLException {
