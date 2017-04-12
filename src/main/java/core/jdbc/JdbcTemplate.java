@@ -11,7 +11,16 @@ import java.util.List;
  * Created by Jbee on 2017. 4. 12..
  */
 public class JdbcTemplate {
-    public static void update(PreparedStatementCreator creator) throws SQLException {
+
+    public static void update(String sql, String... params) throws SQLException {
+        updateQuery((Connection con) -> {
+            PreparedStatement pstmt = con.prepareStatement(sql);
+            setParameters(pstmt, params);
+            return pstmt;
+        });
+    }
+
+    private static void updateQuery(PreparedStatementCreator creator) throws SQLException {
         Connection con = null;
         PreparedStatement pstmt = null;
         try {
@@ -29,7 +38,7 @@ public class JdbcTemplate {
         }
     }
 
-    public static <T> List<T> execute(String sql, RowMapper<T> rowMapper) throws SQLException {
+    public static <T> List<T> queryForAll(String sql, RowMapper<T> rowMapper) throws SQLException {
         Connection con = null;
         PreparedStatement pstmt = null;
         ResultSet rs = null;
@@ -57,7 +66,7 @@ public class JdbcTemplate {
         }
     }
 
-    public static <T> T executeForObject(String sql, RowMapper<T> rowMapper, String... arg) throws SQLException {
+    public static <T> T queryForObject(String sql, RowMapper<T> rowMapper, String... arg) throws SQLException {
         Connection con = null;
         PreparedStatement pstmt = null;
         ResultSet rs = null;
