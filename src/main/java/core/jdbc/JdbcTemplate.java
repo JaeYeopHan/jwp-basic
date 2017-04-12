@@ -31,21 +31,20 @@ public class JdbcTemplate {
         }
     }
 
-    public static List<User> execute(String sql) throws SQLException {
+    public static <T> List<T> execute(String sql, RowMapper<T> rowMapper) throws SQLException {
         Connection con = null;
         PreparedStatement pstmt = null;
         ResultSet rs = null;
-        List<User> users = new ArrayList<>();
         try {
+            List<T> results = new ArrayList<>();
             con = ConnectionManager.getConnection();
             pstmt = con.prepareStatement(sql);
             rs = pstmt.executeQuery();
 
             while (rs.next()) {
-                users.add(new User(rs.getString("userId"), rs.getString("password"), rs.getString("name"),
-                        rs.getString("email")));
+                results.add(rowMapper.mapRow(rs));
             }
-            return users;
+            return results;
         } finally {
             if (rs != null) {
                 rs.close();

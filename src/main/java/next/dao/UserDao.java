@@ -44,7 +44,11 @@ public class UserDao {
 
     public List<User> findAll() throws SQLException {
         String sql = "SELECT * FROM USERS";
-        return JdbcTemplate.execute(sql);
+        return JdbcTemplate.execute(sql, (ResultSet rs) ->
+                new User(rs.getString("userId"),
+                        rs.getString("password"),
+                        rs.getString("name"),
+                        rs.getString("email")));
     }
 
     public User findByUserId(String userId) throws SQLException {
