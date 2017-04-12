@@ -14,32 +14,26 @@ import next.model.User;
 public class UserDao {
     public void insert(User user) throws SQLException {
         String sql = "INSERT INTO USERS VALUES (?, ?, ?, ?)";
-        JdbcTemplate.update(new PreparedStatementCreator() {
-            @Override
-            public PreparedStatement createPrepareStatement(Connection con) throws SQLException {
+        JdbcTemplate.update((Connection con) -> {
                 PreparedStatement pstmt = con.prepareStatement(sql);
                 pstmt.setString(1, user.getUserId());
                 pstmt.setString(2, user.getPassword());
                 pstmt.setString(3, user.getName());
                 pstmt.setString(4, user.getEmail());
                 return pstmt;
-            }
-        });
+            });
     }
 
     public void update(User user) throws SQLException {
         String sql = "UPDATE USERS SET password = ?, name = ?, email = ? WHERE userId = ?";
-        JdbcTemplate.update(new PreparedStatementCreator() {
-            @Override
-            public PreparedStatement createPrepareStatement(Connection con) throws SQLException {
+        JdbcTemplate.update((Connection con) -> {
                 PreparedStatement pstmt = con.prepareStatement(sql);
                 pstmt.setString(1, user.getPassword());
                 pstmt.setString(2, user.getName());
                 pstmt.setString(3, user.getEmail());
                 pstmt.setString(4, user.getUserId());
                 return pstmt;
-            }
-        });
+            });
     }
 
     public List<User> findAll() throws SQLException {
