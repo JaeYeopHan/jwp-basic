@@ -7,14 +7,13 @@ import java.sql.SQLException;
 /**
  * Created by Jbee on 2017. 4. 12..
  */
-public abstract class JdbcTemplate {
-    public void update(String sql) throws SQLException {
+public class AdvJdbcTemplate {
+    public void execute(PreparedStatementCreator creator) throws SQLException {
         Connection con = null;
         PreparedStatement pstmt = null;
         try {
             con = ConnectionManager.getConnection();
-            pstmt = con.prepareStatement(sql);
-            setParameter(pstmt);
+            pstmt = creator.createPrepareStatement(con);
             pstmt.executeUpdate();
         } finally {
             if (pstmt != null) {
@@ -26,7 +25,4 @@ public abstract class JdbcTemplate {
             }
         }
     }
-
-
-    public abstract void setParameter(PreparedStatement pstmt) throws SQLException;
 }
