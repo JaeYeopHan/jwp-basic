@@ -15,7 +15,8 @@ public class UserDao {
     }
 
     public void update(User user) throws SQLException {
-        String sql = "UPDATE USERS SET password = ?, name = ?, email = ? WHERE userId = ?";
+        String sql = "UPDATE USERS SET password = ?, name = ?, email = ? " +
+                     "WHERE userId = ?";
         JdbcTemplate.update(sql, user.getPassword(), user.getName(),
                                       user.getEmail(), user.getUserId());
     }
@@ -30,7 +31,8 @@ public class UserDao {
     }
 
     public User findByUserId(String userId) throws SQLException {
-        String sql = "SELECT userId, password, name, email FROM USERS WHERE userid=?";
+        String sql = "SELECT userId, password, name, email FROM USERS " +
+                     "WHERE userId=?";
         return JdbcTemplate.queryForObject(sql, (ResultSet rs) ->
                 new User(rs.getString("userId"),
                          rs.getString("password"),

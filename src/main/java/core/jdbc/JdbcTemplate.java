@@ -12,7 +12,7 @@ import java.util.List;
  */
 public class JdbcTemplate {
 
-    public static void update(String sql, String... params) throws SQLException {
+    public static void update(String sql, Object... params) throws SQLException {
         updateQuery((Connection con) -> {
             PreparedStatement pstmt = con.prepareStatement(sql);
             setParameters(pstmt, params);
@@ -21,33 +21,20 @@ public class JdbcTemplate {
     }
 
     private static void updateQuery(PreparedStatementCreator creator) throws SQLException {
-        Connection con = null;
-        PreparedStatement pstmt = null;
-        try {
-            con = ConnectionManager.getConnection();
-            pstmt = creator.createPrepareStatement(con);
+        try (Connection con = ConnectionManager.getConnection();
+             PreparedStatement pstmt = creator.createPrepareStatement(con)) {
             pstmt.executeUpdate();
-        } finally {
-            if (pstmt != null) {
-                pstmt.close();
-            }
+        } catch (SQLException e) {
 
-            if (con != null) {
-                con.close();
-            }
         }
     }
 
     public static <T> List<T> queryForAll(String sql, RowMapper<T> rowMapper) throws SQLException {
-        Connection con = null;
-        PreparedStatement pstmt = null;
         ResultSet rs = null;
-        try {
+        try (Connection con = ConnectionManager.getConnection();
+             PreparedStatement pstmt = con.prepareStatement(sql)) {
             List<T> results = new ArrayList<>();
-            con = ConnectionManager.getConnection();
-            pstmt = con.prepareStatement(sql);
             rs = pstmt.executeQuery();
-
             while (rs.next()) {
                 results.add(rowMapper.mapRow(rs));
             }
@@ -56,48 +43,30 @@ public class JdbcTemplate {
             if (rs != null) {
                 rs.close();
             }
-            if (pstmt != null) {
-                pstmt.close();
-            }
-
-            if (con != null) {
-                con.close();
-            }
         }
     }
 
     public static <T> T queryForObject(String sql, RowMapper<T> rowMapper, String... arg) throws SQLException {
-        Connection con = null;
-        PreparedStatement pstmt = null;
         ResultSet rs = null;
-        try {
-            con = ConnectionManager.getConnection();
-            pstmt = con.prepareStatement(sql);
+        try (Connection con = ConnectionManager.getConnection();
+            PreparedStatement pstmt = con.prepareStatement(sql)) {
             setParameters(pstmt, arg);
             rs = pstmt.executeQuery();
-
-            Object obj = null;
+            T obj = null;
             while (rs.next()) {
                 obj = rowMapper.mapRow(rs);
             }
-            return (T) obj;
+            return obj;
         } finally {
             if (rs != null) {
                 rs.close();
             }
-            if (pstmt != null) {
-                pstmt.close();
-            }
-
-            if (con != null) {
-                con.close();
-            }
         }
     }
 
-    private static void setParameters(PreparedStatement pstmt, String[] vargs) throws SQLException {
+    private static void setParameters(PreparedStatement pstmt, Object[] vargs) throws SQLException {
         for (int i = 0; i < vargs.length; i++) {
-            pstmt.setString(i + 1, vargs[i]);
+            pstmt.setString(i + 1, (String) vargs[i]);
         }
     }
 }
