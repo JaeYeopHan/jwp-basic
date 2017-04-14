@@ -94,7 +94,7 @@
 									<div class="form-group col-lg-12">
 										<textarea name="contents" id="contents" class="form-control" placeholder=""></textarea>
 									</div>
-									<input class="btn btn-success pull-right" type="submit" value="답변하기" />
+									<input id="submit-btn" class="btn btn-success pull-right" type="submit" value="답변하기" />
 									<div class="clearfix" />
 								</form>
 							</div>
