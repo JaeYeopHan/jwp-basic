@@ -3,13 +3,11 @@ package next.controller.qna;
 import core.mvc.AbstractController;
 import core.mvc.ModelAndView;
 import next.controller.UserSessionUtils;
+import next.dto.QuestionAnswers;
 import next.service.QnaService;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
-import java.util.Map;
 
 public class DeleteQuestionController extends AbstractController {
 
@@ -26,14 +24,14 @@ public class DeleteQuestionController extends AbstractController {
         }
 
         long questionId = Long.parseLong(req.getParameter("questionId"));
-        Map<String, Object> map = qnaService.ready(questionId);
+        QuestionAnswers dto = qnaService.ready(questionId);
         try {
             qnaService.delete(questionId, req.getSession());
             return jspView("redirect:/");
         } catch(Exception e) {
             return jspView("show.jsp")
-                    .addObject("question", map.get("question"))
-                    .addObject("answers", map.get("answers"))
+                    .addObject("question", dto.getQuestion())
+                    .addObject("answers", dto.getAnswers())
                     .addObject("errorMessage", e.getMessage());
         }
     }

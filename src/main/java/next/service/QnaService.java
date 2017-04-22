@@ -3,13 +3,12 @@ package next.service;
 import next.controller.UserSessionUtils;
 import next.dao.AnswerDao;
 import next.dao.QuestionDao;
+import next.dto.QuestionAnswers;
 import next.model.Answer;
 import next.model.Question;
 
 import javax.servlet.http.HttpSession;
-import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
 
 public class QnaService {
 
@@ -38,10 +37,7 @@ public class QnaService {
         questionDao.delete(questionId);
     }
 
-    public Map<String, Object> ready(long questionId) {
-        Map<String, Object> map = new HashMap<>();
-        map.put("question", questionDao.findById(questionId));
-        map.put("answers", answerDao.findAllByQuestionId(questionId));
-        return map;
+    public QuestionAnswers ready(long questionId) {
+        return new QuestionAnswers(questionDao.findById(questionId), answerDao.findAllByQuestionId(questionId));
     }
 }
